@@ -1,6 +1,6 @@
 {
   "name": "@kami/filebox",
-  "version": "1.0.0",
+  "version": "v1.0.0",
   "description": "A NextJS library for collecting, validating, and archiving files into a ZIP with virus scanning",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
