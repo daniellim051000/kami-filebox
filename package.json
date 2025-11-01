@@ -1,6 +1,6 @@
 {
   "name": "@daniellim0510/filebox",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A NextJS library for collecting, validating, and archiving files into a ZIP with virus scanning",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
