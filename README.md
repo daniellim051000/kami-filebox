@@ -1,36 +1,302 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KAMI FileBox
 
-## Getting Started
+A secure, client-side file collection and archiving library for Next.js applications. Easily collect, validate, scan, and package multiple files into a ZIP archive with a beautiful modal interface.
 
-First, run the development server:
+## Features
+
+- **Secure File Validation**: Whitelist-based file type validation by extension and MIME type
+- **Client-Side Security Scanning**: Basic security checks including file signature verification and content scanning
+- **Drag & Drop Interface**: Intuitive file selection with drag-and-drop support
+- **ZIP Archive Creation**: Automatic packaging of validated files into a ZIP archive
+- **Real-time Status Updates**: Visual feedback for validation and scanning progress
+- **Toast Notifications**: User-friendly notifications for all operations
+- **TypeScript Support**: Full TypeScript support with comprehensive type definitions
+- **Customizable**: Configurable file size limits, allowed types, and scanning options
+- **Dark Mode Support**: Built-in dark mode styling
+
+## Installation
 
 ```bash
-npm run dev
+npm install @daniellim0510/filebox
 # or
-yarn dev
+yarn add @daniellim0510/filebox
 # or
-pnpm dev
-# or
-bun dev
+pnpm add @daniellim0510/filebox
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quick Start
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```tsx
+'use client';
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+import { useState } from 'react';
+import { FileBoxModal } from '@daniellim0510/filebox';
 
-## Learn More
+export default function MyComponent() {
+  const [isOpen, setIsOpen] = useState(false);
 
-To learn more about Next.js, take a look at the following resources:
+  const handleComplete = (zipBlob: Blob, filenames: string[]) => {
+    // Handle the created ZIP archive
+    console.log('Archive created with files:', filenames);
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    // Download the archive
+    const url = URL.createObjectURL(zipBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'my-archive.zip';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  return (
+    <>
+      <button onClick={() => setIsOpen(true)}>
+        Open FileBox
+      </button>
 
-## Deploy on Vercel
+      <FileBoxModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onComplete={handleComplete}
+      />
+    </>
+  );
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Supported File Types
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Documents
+- PDF (`.pdf`)
+- Text (`.txt`)
+- Word (`.docx`)
+- Excel (`.xlsx`)
+- PowerPoint (`.pptx`)
+- HTML (`.html`)
+- Markdown (`.md`)
+- JSON (`.json`)
+
+### Images
+- JPEG (`.jpg`, `.jpeg`)
+- PNG (`.png`)
+- GIF (`.gif`)
+- WebP (`.webp`)
+- SVG (`.svg`)
+- BMP (`.bmp`)
+- HEIF (`.heif`)
+
+### Audio
+- MP3 (`.mp3`)
+- WAV (`.wav`)
+- OGG (`.ogg`)
+- AIFF (`.aiff`)
+- AAC (`.aac`)
+- FLAC (`.flac`)
+
+### Video
+- QuickTime (`.mov`)
+- MP4 (`.mp4`)
+- AVI (`.avi`)
+- WMV (`.wmv`)
+- MKV (`.mkv`)
+
+## Configuration
+
+You can customize FileBox behavior by passing a `config` prop:
+
+```tsx
+<FileBoxModal
+  isOpen={isOpen}
+  onClose={onClose}
+  onComplete={handleComplete}
+  config={{
+    maxFileSize: 10 * 1024 * 1024,      // 10MB per file
+    maxTotalSize: 50 * 1024 * 1024,     // 50MB total
+    maxFiles: 20,                        // Maximum 20 files
+    allowedExtensions: ['.pdf', '.jpg'], // Custom allowed extensions
+    allowedMimeTypes: ['application/pdf', 'image/jpeg'], // Custom MIME types
+    virusScanner: {
+      enabled: true,                     // Enable/disable scanning
+      apiEndpoint: '/api/scan',          // Custom scan API endpoint
+      timeout: 30000,                    // Scan timeout in ms
+    },
+  }}
+/>
+```
+
+## API Reference
+
+### FileBoxModal Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `isOpen` | `boolean` | Yes | Controls modal visibility |
+| `onClose` | `() => void` | Yes | Callback when modal should close |
+| `onComplete` | `(zipBlob: Blob, filenames: string[]) => void` | Yes | Callback when archive is created |
+| `config` | `FileBoxConfig` | No | Configuration options |
+| `className` | `string` | No | Additional CSS classes |
+
+### FileBoxConfig
+
+```typescript
+interface FileBoxConfig {
+  maxFileSize?: number;        // Max size per file in bytes (default: 10MB)
+  maxTotalSize?: number;       // Max total size in bytes (default: 50MB)
+  maxFiles?: number;           // Max number of files (default: unlimited)
+  allowedExtensions?: string[]; // Allowed file extensions
+  allowedMimeTypes?: string[];  // Allowed MIME types
+  virusScanner?: VirusScannerConfig;
+}
+
+interface VirusScannerConfig {
+  enabled?: boolean;    // Enable scanning (default: true)
+  apiEndpoint?: string; // Custom API endpoint for server-side scanning
+  timeout?: number;     // Scan timeout in ms (default: 30000)
+}
+```
+
+## Advanced Usage
+
+### Using Utility Functions
+
+```tsx
+import {
+  validateFile,
+  formatFileSize,
+  createZipArchive,
+  downloadBlob,
+} from '@daniellim0510/filebox';
+
+// Validate a single file
+const result = validateFile(file, {
+  maxFileSize: 5 * 1024 * 1024,
+  allowedExtensions: ['.pdf'],
+});
+
+if (!result.isValid) {
+  console.error(result.error);
+}
+
+// Format file size
+console.log(formatFileSize(1024 * 1024)); // "1 MB"
+
+// Create ZIP archive manually
+const { blob, filenames } = await createZipArchive(files);
+
+// Download blob
+downloadBlob(blob, 'my-archive.zip');
+```
+
+### Using Hooks
+
+```tsx
+import {
+  useFileValidation,
+  useVirusScanner,
+  useZipArchive,
+} from '@daniellim0510/filebox';
+
+function MyCustomComponent() {
+  const { validateFiles } = useFileValidation();
+  const { scanFiles } = useVirusScanner();
+  const { createArchive } = useZipArchive();
+
+  // Your custom implementation
+}
+```
+
+### Server-Side Virus Scanning
+
+To integrate with a server-side virus scanner, provide an API endpoint:
+
+```tsx
+<FileBoxModal
+  // ... other props
+  config={{
+    virusScanner: {
+      enabled: true,
+      apiEndpoint: '/api/scan-file',
+      timeout: 60000,
+    },
+  }}
+/>
+```
+
+Your API endpoint should accept a file via `FormData` and return:
+
+```typescript
+{
+  isClean: boolean;
+  error?: string;
+  details?: string;
+}
+```
+
+Example API route:
+
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(request: NextRequest) {
+  const formData = await request.formData();
+  const file = formData.get('file') as File;
+
+  // Integrate with your virus scanning service (ClamAV, etc.)
+  const isClean = await scanWithClamAV(file);
+
+  return NextResponse.json({
+    isClean,
+    details: isClean ? 'File is clean' : 'Virus detected',
+  });
+}
+```
+
+## Security Notes
+
+1. **Client-Side Scanning Limitations**: The built-in client-side scanning performs basic security checks but is NOT a replacement for proper virus scanning. For production use, integrate with a server-side virus scanner like ClamAV.
+
+2. **File Validation**: Always validate files on both client and server side. Never trust client-side validation alone.
+
+3. **MIME Type Spoofing**: The library checks both file extensions and MIME types, but determined attackers can still spoof these. Use server-side scanning for critical applications.
+
+4. **File Size Limits**: Configure appropriate file size limits to prevent memory issues and DoS attacks.
+
+## Development
+
+To run the demo application:
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build the library
+npm run build:lib
+
+# Build the Next.js app
+npm run build
+```
+
+Open [http://localhost:3000](http://localhost:3000) to see the demo.
+
+## License
+
+MIT
+
+## Author
+
+Daniel Lim
+
+## Repository
+
+[https://github.com/daniellim051000/kami-filebox](https://github.com/daniellim051000/kami-filebox)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Support
+
+For issues and questions, please use the [GitHub issue tracker](https://github.com/daniellim051000/kami-filebox/issues).
