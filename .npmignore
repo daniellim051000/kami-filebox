@@ -1,0 +1,36 @@
+# Development files
+.next/
+app/
+public/
+node_modules/
+
+# Configuration files
+next.config.ts
+tsconfig.json
+tsup.config.ts
+eslint.config.mjs
+postcss.config.mjs
+tailwind.config.ts
+
+# Environment files
+.env*
+
+# Source files (we only publish dist/)
+src/
+
+# Build artifacts
+*.tsbuildinfo
+next-env.d.ts
+
+# Git
+.git/
+.gitignore
+
+# Documentation (optional - remove this line if you want to include README)
+# README.md
+
+# Misc
+.DS_Store
+*.log
+coverage/
+.vercel/
