@@ -1,5 +1,5 @@
 {
-  "name": "@kami/filebox",
+  "name": "@daniellim0510/filebox",
   "version": "1.0.0",
   "description": "A NextJS library for collecting, validating, and archiving files into a ZIP with virus scanning",
   "main": "./dist/index.js",
