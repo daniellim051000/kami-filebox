@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* Scan all source files for Tailwind classes */
+@source "../src/**/*.{ts,tsx}";

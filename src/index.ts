@@ -1,5 +1,9 @@
+// Import styles for bundling (enables auto-injection)
+import './styles.css';
+
 // Main component export
 export { FileBoxModal } from './components/FileBoxModal';
+export { StyleInjector } from './components/StyleInjector';
 
 // Type exports
 export type {

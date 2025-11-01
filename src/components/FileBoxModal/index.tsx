@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { FileBoxModalProps, FileItem, FileStatus } from '../../types';
 import { DropZone } from './DropZone';
 import { FileList } from './FileList';
+import { StyleInjector } from '../StyleInjector';
 import { useFileValidation } from '../../hooks/useFileValidation';
 import { useVirusScanner } from '../../hooks/useVirusScanner';
 import { useZipArchive } from '../../hooks/useZipArchive';
@@ -162,8 +163,9 @@ export function FileBoxModal({
 
   return (
     <>
+      <StyleInjector />
       <Toaster position="top-right" />
-      <Dialog open={isOpen} onClose={onClose} className="relative z-50">
+      <Dialog open={isOpen} onClose={onClose} className="relative z-50" data-filebox-modal>
         {/* Backdrop */}
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 

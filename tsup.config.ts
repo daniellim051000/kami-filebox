@@ -10,4 +10,13 @@ export default defineConfig({
   external: ['react', 'react-dom', 'next'],
   treeshake: true,
   minify: true,
+  // Inject CSS into JS bundle for auto-import
+  injectStyle: true,
+  // Handle CSS files
+  esbuildOptions(options) {
+    options.loader = {
+      ...options.loader,
+      '.css': 'css',
+    };
+  },
 });
