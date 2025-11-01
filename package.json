@@ -10,7 +10,8 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
-    }
+    },
+    "./styles.css": "./dist/styles.css"
   },
   "files": [
     "dist"
@@ -33,7 +34,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:lib": "tsup",
+    "build:css": "tailwindcss --input src/styles.css --output dist/styles.css --minify",
+    "build:lib": "tsup && npm run build:css",
     "start": "next start",
     "lint": "eslint"
   },
