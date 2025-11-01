@@ -14,6 +14,26 @@ A secure, client-side file collection and archiving library for Next.js applicat
 - **Customizable**: Configurable file size limits, allowed types, and scanning options
 - **Dark Mode Support**: Built-in dark mode styling
 
+## Development
+
+To run the demo application:
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build the library
+npm run build:lib
+
+# Build the Next.js app
+npm run build
+```
+
+Open [http://localhost:3000](http://localhost:3000) to see the demo.
+
 ## Installation
 
 ```bash
@@ -155,102 +175,6 @@ interface VirusScannerConfig {
 }
 ```
 
-## Advanced Usage
-
-### Using Utility Functions
-
-```tsx
-import {
-  validateFile,
-  formatFileSize,
-  createZipArchive,
-  downloadBlob,
-} from '@daniellim0510/filebox';
-
-// Validate a single file
-const result = validateFile(file, {
-  maxFileSize: 5 * 1024 * 1024,
-  allowedExtensions: ['.pdf'],
-});
-
-if (!result.isValid) {
-  console.error(result.error);
-}
-
-// Format file size
-console.log(formatFileSize(1024 * 1024)); // "1 MB"
-
-// Create ZIP archive manually
-const { blob, filenames } = await createZipArchive(files);
-
-// Download blob
-downloadBlob(blob, 'my-archive.zip');
-```
-
-### Using Hooks
-
-```tsx
-import {
-  useFileValidation,
-  useVirusScanner,
-  useZipArchive,
-} from '@daniellim0510/filebox';
-
-function MyCustomComponent() {
-  const { validateFiles } = useFileValidation();
-  const { scanFiles } = useVirusScanner();
-  const { createArchive } = useZipArchive();
-
-  // Your custom implementation
-}
-```
-
-### Server-Side Virus Scanning
-
-To integrate with a server-side virus scanner, provide an API endpoint:
-
-```tsx
-<FileBoxModal
-  // ... other props
-  config={{
-    virusScanner: {
-      enabled: true,
-      apiEndpoint: '/api/scan-file',
-      timeout: 60000,
-    },
-  }}
-/>
-```
-
-Your API endpoint should accept a file via `FormData` and return:
-
-```typescript
-{
-  isClean: boolean;
-  error?: string;
-  details?: string;
-}
-```
-
-Example API route:
-
-```typescript
-import { NextRequest, NextResponse } from 'next/server';
-
-export async function POST(request: NextRequest) {
-  const formData = await request.formData();
-  const file = formData.get('file') as File;
-
-  // Integrate with your virus scanning service (ClamAV, etc.)
-  const isClean = await scanWithClamAV(file);
-
-  return NextResponse.json({
-    isClean,
-    details: isClean ? 'File is clean' : 'Virus detected',
-  });
-}
-```
-
 ## Security Notes
 
 1. **Client-Side Scanning Limitations**: The built-in client-side scanning performs basic security checks but is NOT a replacement for proper virus scanning. For production use, integrate with a server-side virus scanner like ClamAV.
@@ -261,25 +185,7 @@ export async function POST(request: NextRequest) {
 
 4. **File Size Limits**: Configure appropriate file size limits to prevent memory issues and DoS attacks.
 
-## Development
 
-To run the demo application:
-
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build the library
-npm run build:lib
-
-# Build the Next.js app
-npm run build
-```
-
-Open [http://localhost:3000](http://localhost:3000) to see the demo.
 
 ## License
 
